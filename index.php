@@ -1,5 +1,5 @@
-<?php include 'config.php';  //include config
-// set dynamic title
+<?php include 'config.php'; 
+
 $db = new Database();
 $db->select('options','site_title',null,null,null,null);
 $result = $db->getResult();
@@ -9,7 +9,7 @@ if(!empty($result)){
 }else{ 
     $title = "Shopping Project";
 }
-// include header 
+
 include 'header.php'; ?>
 <div id="banner">
     <div class="container-fluid">

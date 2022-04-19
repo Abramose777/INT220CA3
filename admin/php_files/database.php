@@ -2,14 +2,14 @@
 
 class Database{
 
-		private $db_host = "localhost";  // Change as required
-		private $db_user = "root";       // Change as required
-		private $db_pass = "";   // Change as required
-		private $db_name = "shopping_db";   // Change as required
+		private $db_host = "localhost";  
+		private $db_user = "root";       
+		private $db_pass = "";   
+		private $db_name = "shopping_db";   
 
-		private $result = array(); // Any results from a query will be stored here
-		private $mysqli = ""; // This will be our mysqli object
-		private $myQuery = "";// used for debugging process with SQL return
+		private $result = array(); 
+		private $mysqli = ""; 
+		private $myQuery = "";
 
 		private $conn = false;
 
@@ -22,7 +22,7 @@ class Database{
 				// Check connection
 				if ($this->mysqli->connect_errno > 0) {
 				 	array_push($this->result,$this->mysqli->connect_error);
-	        return false; // Problem selecting database return FALSE
+	        return false; 
 				}
 
 			}else{
@@ -31,7 +31,6 @@ class Database{
 		}
 
 
-		// Function to insert into the database
     public function insert($table,$params=array()){
     	// Check to see if the table exists
     	 if($this->tableExists($table)){
@@ -56,68 +55,64 @@ class Database{
         }
     }
 
-    // Function to update row in database
     public function update($table,$params=array(),$where = null){
-    	// Check to see if table exists
+    
     	if($this->tableExists($table)){
-    		// Create Array to hold all the columns to update
+    	
 	        $args=array();
 					foreach($params as $key=>$value){
-						// Seperate each column out with it's corresponding value
-						// $args[]=$key.'="'.$value.'"';
+						
+			
 						$args[]="$key='$value'";
 					}
-					// print_r($params);
-					// print_r($args);
-					// Create the query
-					//$sql='UPDATE '.$table.' SET '.implode(',',$args).' WHERE '.$where;
+				
 					$sql="UPDATE $table SET " . implode(',',$args);
 					if($where != null){
 		        $sql .= " WHERE $where";
 					}
-					$this->myQuery = $sql; // Pass back the sql
-			 // Make query to database
+					$this->myQuery = $sql;
+			 
           if($query = $this->mysqli->query($sql)){
           	array_push($this->result,$this->mysqli->affected_rows);
-          	return true; // Update has been successful
+          	return true; 
           }else{
           	array_push($this->result,$this->mysqli->error);
-              return false; // Update has not been successful
+              return false; 
           }
         }else{
-            return false; // The table does not exist
+            return false; 
         }
     }
 
-		//Function to delete table or row(s) from database
+		
     public function delete($table,$where = null){
-    	// Check to see if table exists
+    
     	 if($this->tableExists($table)){
-    	 	// The table exists check to see if we are deleting rows or table
     	 	
-          $sql = "DELETE FROM $table"; // Create query to delete rows
+    	 	
+          $sql = "DELETE FROM $table";
          	if($where != null){
 	        	$sql .= " WHERE $where";
 					}
-          // Submit query to database
+          
           if($this->mysqli->query($sql)){
           	array_push($this->result,$this->mysqli->affected_rows);
-              //$this->myQuery = $delete; // Pass back the SQL
-              return true; // The query exectued correctly
+            
+              return true; 
           }else{
           	array_push($this->result,$this->mysqli->error);
-             	return false; // The query did not execute correctly
+             	return false; 
           }
         }else{
-            return false; // The table does not exist
+            return false; 
         }
     }
 
-  // Function to SELECT from the database
+  
 	public function select($table, $rows = '*', $join = null, $where = null, $order = null, $limit = null){
-		// Check to see if the table exists
+	
     if($this->tableExists($table)){ 
-			// Create query from the variables passed to the function
+			
 			$sql = "SELECT $rows FROM  $table";
 			if($join != null){
 				$sql .= ' JOIN '.$join;
@@ -140,29 +135,29 @@ class Database{
 	        $sql .= ' LIMIT '.$start.','.$limit;
 	    } 
 			
-	    	$this->myQuery = $sql; // Pass back the SQL 
-	    	// The table exists, run the query
+	    	$this->myQuery = $sql; 
+	    	
 	    	$query = $this->mysqli->query($sql);   
 
 				if($query){
 					$this->result = $query->fetch_all(MYSQLI_ASSOC);
-					return true; // Query was successful
+					return true; 
 				}else{
 					array_push($this->result,$this->mysqli->error);
-					return false; // No rows where returned
+					return false;
 				}
     }else{
-    	return false; // Table does not exist
+    	return false; 
   	}
   }
 
-   // FUNCTION to show pagination
+  
   public function pagination($table, $join = null, $where = null, $limit){
-  	// Check to see if table exists
+  
   	if($this->tableExists($table)){
-  		//If no limit is set then no pagination is available
+  		
   		if( $limit != null){
-  			// select count() query for pagination
+  			
         $sql = "SELECT COUNT(*) FROM $table";
         if($where != null){
       		$sql .= " WHERE $where";
@@ -187,7 +182,7 @@ class Database{
 					  $page = 1;
 					}
 
-        // show pagination
+     
         $output =   "<ul class='pagination'>";
         if($page>1){
             $output .="<li><a href='$url?page=".($page-1)."' class='page-link'>Prev</a></li>";
@@ -211,12 +206,12 @@ class Database{
   		}
 
   	}else{
-    	return false; // Table does not exist
+    	return false; 
   	}
   }
 
 	public function sql($sql){
-		$this->myQuery = $sql; // Pass back the SQL
+		$this->myQuery = $sql; 
 		$query = $this->mysqli->query($sql);
 
 		if($query){
@@ -235,15 +230,15 @@ class Database{
           array_push($this->result,$query->fetch_all(MYSQLI_ASSOC));
           break;
       }
-			// $this->result = $query->fetch_all(MYSQLI_ASSOC);
-			return true; // Query was successful
+			
+			return true; 
 		}else{
 			array_push($this->result,$this->mysqli->error);
-			return false; // No rows where returned
+			return false; 
 		}
 	}
 
-	// Private function to check if table exists for use with queries
+	
 	private function tableExists($table){
 		$tablesInDb = $this->mysqli->query("SHOW TABLES FROM  $this->db_name LIKE '$table'");
         if($tablesInDb){

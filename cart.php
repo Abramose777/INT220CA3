@@ -52,7 +52,7 @@
                                 <a class="btn btn-sm btn-primary" href="<?php echo $hostname; ?>" >Continue Shopping</a>
                                 <?php if(isset($_SESSION['user_role'])){ ?>
 
-                                <form action="index.php" class="checkout-form pull-right" method="POST">
+                                <form action="payment.php" class="checkout-form pull-right" method="POST">
                                     <?php
                                         $product_id = '';
                                         foreach($result as $row){
